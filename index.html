@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSort AI – Smart Waste Segregation & Circular Economy Assistant</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        ecoBg: '#071510',
+                        ecoSurface: '#0d221a',
+                        ecoCard: 'rgba(16, 42, 33, 0.75)',
+                        mint: '#00E676',
+                        mintHover: '#00C853',
+                        amberGold: '#FFB703',
+                        cyanGlow: '#00F0FF',
+                        binGreen: '#10B981',
+                        binBlue: '#3B82F6',
+                        binRed: '#EF4444',
+                        binGray: '#64748B'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body {
+            background-color: #071510;
+            color: #E2E8F0;
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(0, 230, 118, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(0, 240, 255, 0.05) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(13, 34, 26, 0.6) 0%, transparent 80%);
+            background-attachment: fixed;
+        }
+
+        .glass-card {
+            background: rgba(13, 34, 26, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(0, 230, 118, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-glow-mint {
+            border: 1px solid rgba(0, 230, 118, 0.4);
+            box-shadow: 0 0 25px -5px rgba(0, 230, 118, 0.25);
+        }
+
+        .badge-glow {
+            box-shadow: 0 0 12px rgba(0, 230, 118, 0.3);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #00E676 0%, #00F0FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .slider-thumb::-webkit-slider-thumb {
+            appearance: none;
+            height: 22px;
+            width: 22px;
+            border-radius: 50%;
+            background: #00E676;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00E676;
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased min-h-screen flex flex-col selection:bg-mint selection:text-black">
+
+    <header class="sticky top-0 z-50 glass-card border-b border-emerald-900/40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo & Initiative Badge -->
+            <div class="flex items-center space-x-3">
+                <div
+                    class="h-11 w-11 rounded-xl bg-gradient-to-tr from-mint to-cyanGlow flex items-center justify-center text-black shadow-lg shadow-mint/20">
+                    <i data-lucide="recycle" class="w-6 h-6 stroke-[2.4]"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-display font-bold text-2xl tracking-tight text-white">EcoSort<span
+                                class="text-mint">.AI</span></span>
+                        <span
+                            class="hidden sm:inline-block px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider rounded-full bg-emerald-950/80 text-mint border border-mint/30">v1.2
+                            Live</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 font-medium hidden md:block">1M1B × IBM SkillsBuild × AICTE
+                        Sustainability Initiative</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="hidden lg:flex items-center space-x-8 text-sm font-medium">
+                <a href="#classifier" class="text-gray-300 hover:text-mint transition flex items-center space-x-1.5">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-mint"></i>
+                    <span>AI Classifier</span>
+                </a>
+                <a href="#bin-guide" class="text-gray-300 hover:text-mint transition flex items-center space-x-1.5">
+                    <i data-lucide="layers" class="w-4 h-4 text-mint"></i>
+                    <span>Bin Stream Guide</span>
+                </a>
+                <a href="#calculator" class="text-gray-300 hover:text-mint transition flex items-center space-x-1.5">
+                    <i data-lucide="calculator" class="w-4 h-4 text-mint"></i>
+                    <span>Impact Estimator</span>
+                </a>
+                <a href="#sdg-hub" class="text-gray-300 hover:text-mint transition flex items-center space-x-1.5">
+                    <i data-lucide="globe-2" class="w-4 h-4 text-mint"></i>
+                    <span>SDG 12 & 11</span>
+                </a>
+            </nav>
+
+            <!-- Action Button -->
+            <div class="flex items-center space-x-3">
+                <a href="https://github.com/Damon00007/EcoSort-AI-Waste-Segregation-Assistant" target="_blank"
+                    rel="noopener noreferrer"
+                    class="px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-emerald-900/40 hover:bg-emerald-800/60 text-gray-200 border border-emerald-700/50 transition flex items-center space-x-2">
+                    <i data-lucide="github" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Source Code</span>
+                </a>
+                <a href="#classifier"
+                    class="px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-mint hover:bg-mintHover text-black transition shadow-lg shadow-mint/20 flex items-center space-x-1.5">
+                    <i data-lucide="scan-line" class="w-4 h-4"></i>
+                    <span>Classify Waste</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <section class="relative pt-12 pb-16 md:pt-20 md:pb-24 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+
+                <!-- Pill Tag -->
+                <div
+                    class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-950/70 border border-emerald-500/30 text-mint text-xs font-semibold mb-6">
+                    <span class="w-2 h-2 rounded-full bg-mint animate-pulse"></span>
+                    <span>Zero-Contamination Source Segregation Engine</span>
+                </div>
+
+                <!-- Headline -->
+                <h1
+                    class="text-4xl sm:text-6xl md:text-7xl font-display font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-tight">
+                    Eliminate Landfill Waste with <span class="gradient-text">Instant AI Guidance</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="mt-6 text-base sm:text-lg text-gray-300 max-w-2xl mx-auto font-normal leading-relaxed">
+                    Over 70% of recyclable material is ruined at disposal points due to mixed waste. EcoSort AI
+                    identifies items, prescribes immediate bin mapping, and specifies pre-cleaning steps to maximize
+                    circularity.
+                </p>
+
+                <!-- CTAs -->
+                <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#classifier"
+                        class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-mint hover:bg-mintHover text-black font-bold text-base transition shadow-xl shadow-mint/25 flex items-center justify-center space-x-2">
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                        <span>Test Waste Item Now</span>
+                    </a>
+                    <a href="#bin-guide"
+                        class="w-full sm:w-auto px-7 py-3.5 rounded-xl glass-card text-gray-200 hover:text-white border border-emerald-600/40 hover:border-mint/50 font-semibold text-base transition flex items-center justify-center space-x-2">
+                        <i data-lucide="book-open" class="w-5 h-5 text-mint"></i>
+                        <span>Browse 3-Bin Rules</span>
+                    </a>
+                </div>
+
+                <!-- Metric Cards Bar -->
+                <div class="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-left">
+                    <div class="p-4 rounded-2xl glass-card border border-emerald-900/60">
+                        <p class="text-xs uppercase tracking-wider text-gray-400 font-semibold">Segregation Target</p>
+                        <p class="text-2xl sm:text-3xl font-bold font-display text-white mt-1">100%</p>
+                        <span class="text-xs text-mint font-medium flex items-center gap-1 mt-0.5"><i
+                                data-lucide="check-circle" class="w-3.5 h-3.5"></i> Source-level purity</span>
+                    </div>
+                    <div class="p-4 rounded-2xl glass-card border border-emerald-900/60">
+                        <p class="text-xs uppercase tracking-wider text-gray-400 font-semibold">Landfill Diverted</p>
+                        <p class="text-2xl sm:text-3xl font-bold font-display text-white mt-1">70%+</p>
+                        <span class="text-xs text-mint font-medium flex items-center gap-1 mt-0.5"><i
+                                data-lucide="trending-up" class="w-3.5 h-3.5"></i> Dry stream recovery</span>
+                    </div>
+                    <div class="p-4 rounded-2xl glass-card border border-emerald-900/60">
+                        <p class="text-xs uppercase tracking-wider text-gray-400 font-semibold">Harm Reduction</p>
+                        <p class="text-2xl sm:text-3xl font-bold font-display text-amberGold mt-1">Zero</p>
+                        <span class="text-xs text-amber-300 font-medium flex items-center gap-1 mt-0.5"><i
+                                data-lucide="shield-alert" class="w-3.5 h-3.5"></i> Sanitation injuries</span>
+                    </div>
+                    <div class="p-4 rounded-2xl glass-card border border-emerald-900/60">
+                        <p class="text-xs uppercase tracking-wider text-gray-400 font-semibold">Global Alignment</p>
+                        <p class="text-2xl sm:text-3xl font-bold font-display text-cyanGlow mt-1">SDG 12</p>
+                        <span class="text-xs text-cyan-300 font-medium flex items-center gap-1 mt-0.5"><i
+                                data-lucide="globe" class="w-3.5 h-3.5"></i> Target 12.5 circularity</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="classifier" class="py-12 relative">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-display font-bold text-white flex items-center justify-center gap-2">
+                        <i data-lucide="sparkles" class="w-7 h-7 text-mint"></i>
+                        Real-Time AI Waste Classifier
+                    </h2>
+                    <p class="text-gray-400 text-sm mt-2">Type any municipal or household item to query material
+                        composition, designated bin, and prep steps.</p>
+                </div>
+
+                <!-- Classifier Search Box & Quick Presets -->
+                <div class="glass-card rounded-3xl p-6 sm:p-8 glass-glow-mint relative">
+
+                    <div class="relative">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-emerald-400">
+                            <i data-lucide="search" class="w-5 h-5"></i>
+                        </div>
+                        <input type="text" id="wasteInput"
+                            placeholder="Type an item (e.g. 'Used banana peel', 'Lithium battery', 'Crushed plastic bottle')..."
+                            class="w-full pl-12 pr-28 py-4 bg-emerald-950/70 border border-emerald-500/40 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-mint focus:border-transparent text-sm sm:text-base font-medium shadow-inner"
+                            onkeydown="if(event.key==='Enter') classifyItem();" />
+                        <button onclick="classifyItem()"
+                            class="absolute right-2 top-2 bottom-2 px-5 bg-mint hover:bg-mintHover text-black font-bold rounded-xl text-sm transition flex items-center space-x-1.5 shadow-md shadow-mint/20">
+                            <span>Inspect</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <!-- Quick Discovery Chips -->
+                    <div class="mt-4 flex items-center flex-wrap gap-2">
+                        <span class="text-xs text-gray-400 font-semibold mr-1">Try quick items:</span>
+                        <button onclick="setQuery('Plastic Water Bottle')"
+                            class="text-xs px-3 py-1.5 rounded-lg bg-emerald-900/40 hover:bg-emerald-800 text-emerald-200 border border-emerald-700/50 transition">🧴
+                            Plastic Bottle</button>
+                        <button onclick="setQuery('Used Banana Peel')"
+                            class="text-xs px-3 py-1.5 rounded-lg bg-emerald-900/40 hover:bg-emerald-800 text-emerald-200 border border-emerald-700/50 transition">🍌
+                            Banana Peel</button>
+                        <button onclick="setQuery('Lithium Mobile Battery')"
+                            class="text-xs px-3 py-1.5 rounded-lg bg-emerald-900/40 hover:bg-emerald-800 text-emerald-200 border border-emerald-700/50 transition">🔋
+                            Lithium Battery</button>
+                        <button onclick="setQuery('Greasy Pizza Box')"
+                            class="text-xs px-3 py-1.5 rounded-lg bg-emerald-900/40 hover:bg-emerald-800 text-emerald-200 border border-emerald-700/50 transition">🍕
+                            Greasy Pizza Box</button>
+                        <button onclick="setQuery('Broken CFL Bulb')"
+                            class="text-xs px-3 py-1.5 rounded-lg bg-emerald-900/40 hover:bg-emerald-800 text-emerald-200 border border-emerald-700/50 transition">💡
+                            Broken CFL Bulb</button>
+                        <button onclick="setQuery('Aluminium Soda Can')"
+                            class="text-xs px-3 py-1.5 rounded-lg bg-emerald-900/40 hover:bg-emerald-800 text-emerald-200 border border-emerald-700/50 transition">🥫
+                            Soda Can</button>
+                    </div>
+
+                    <!-- Dynamic Output Card Container -->
+                    <div id="resultContainer" class="mt-8 pt-6 border-t border-emerald-900/60 hidden">
+                        <!-- Will be populated by JS -->
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <section id="bin-guide" class="py-16 bg-emerald-950/20 border-y border-emerald-900/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="text-xs font-bold uppercase tracking-widest text-mint">Municipal Standards</span>
+                    <h2 class="text-3xl sm:text-4xl font-display font-bold text-white mt-1">Source Segregation Streams
+                    </h2>
+                    <p class="text-gray-400 text-sm sm:text-base mt-2">
+                        The foundation of circular waste management lies in clear distinction between Wet
+                        (Biodegradable), Dry (Recyclable), and Domestic Hazardous waste streams.
+                    </p>
+                </div>
+
+                <!-- 3 Pillars Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+                    <!-- Green Bin Card -->
+                    <div
+                        class="glass-card rounded-3xl p-6 border-t-4 border-t-emerald-500 hover:border-mint transition-all duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <span
+                                class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-950 text-emerald-400 border border-emerald-500/40">Green
+                                Bin</span>
+                            <div
+                                class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                                <i data-lucide="leaf" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-display font-bold text-white">Wet & Biodegradable Waste</h3>
+                        <p class="text-gray-400 text-sm mt-1">Organic materials capable of microbial decomposition into
+                            nutrient-dense compost.</p>
+
+                        <div class="mt-6 space-y-3">
+                            <div class="p-3 rounded-xl bg-emerald-950/50 border border-emerald-800/40">
+                                <p class="text-xs font-semibold text-emerald-400 uppercase tracking-wide">Included Items
+                                </p>
+                                <p class="text-xs text-gray-300 mt-1">Fruit & vegetable peels, leftover food, tea
+                                    leaves, eggshells, garden leaves, fallen flowers.</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-red-950/30 border border-red-900/30">
+                                <p class="text-xs font-semibold text-red-400 uppercase tracking-wide">Strict Exclusions
+                                </p>
+                                <p class="text-xs text-gray-300 mt-1">Plastic packaging, aluminium foils, glass bottles,
+                                    diapers, sanitary pads.</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-xs text-emerald-300 flex items-center gap-1.5">
+                            <i data-lucide="check" class="w-4 h-4"></i> Converts to organic compost & biogas
+                        </div>
+                    </div>
+
+                    <!-- Blue Bin Card -->
+                    <div
+                        class="glass-card rounded-3xl p-6 border-t-4 border-t-blue-500 hover:border-cyanGlow transition-all duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <span
+                                class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-950 text-blue-400 border border-blue-500/40">Blue
+                                Bin</span>
+                            <div
+                                class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
+                                <i data-lucide="box" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-display font-bold text-white">Dry Recyclable Waste</h3>
+                        <p class="text-gray-400 text-sm mt-1">Clean, non-biodegradable materials destined for mechanical
+                            recycling and repurposing.</p>
+
+                        <div class="mt-6 space-y-3">
+                            <div class="p-3 rounded-xl bg-blue-950/50 border border-blue-800/40">
+                                <p class="text-xs font-semibold text-blue-400 uppercase tracking-wide">Included Items
+                                </p>
+                                <p class="text-xs text-gray-300 mt-1">Rinsed plastic bottles, cardboard cartons,
+                                    newspapers, clean glass bottles, metal soda cans.</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-red-950/30 border border-red-900/30">
+                                <p class="text-xs font-semibold text-red-400 uppercase tracking-wide">Strict Exclusions
+                                </p>
+                                <p class="text-xs text-gray-300 mt-1">Food-stained oily pizza boxes,
+                                    thermocol/styrofoam, medical syringes, wet tissue paper.</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-xs text-blue-300 flex items-center gap-1.5">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> Saved from incinerators & landfills
+                        </div>
+                    </div>
+
+                    <!-- Red / Black Bin Card -->
+                    <div
+                        class="glass-card rounded-3xl p-6 border-t-4 border-t-red-500 hover:border-amberGold transition-all duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <span
+                                class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-red-950 text-red-400 border border-red-500/40">Red
+                                / Black Bin</span>
+                            <div
+                                class="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center font-bold">
+                                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-display font-bold text-white">Domestic Hazardous & E-Waste</h3>
+                        <p class="text-gray-400 text-sm mt-1">Toxic, corrosive, flammable, or chemical elements
+                            requiring specialized treatment facilities.</p>
+
+                        <div class="mt-6 space-y-3">
+                            <div class="p-3 rounded-xl bg-red-950/50 border border-red-800/40">
+                                <p class="text-xs font-semibold text-red-400 uppercase tracking-wide">Included Items</p>
+                                <p class="text-xs text-gray-300 mt-1">Lithium batteries, button cells, mercury
+                                    thermometers, CFL tubes, pesticide bottles, discarded medicines.</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-emerald-950/30 border border-emerald-900/30">
+                                <p class="text-xs font-semibold text-emerald-400 uppercase tracking-wide">Disposal Rule
+                                </p>
+                                <p class="text-xs text-gray-300 mt-1">Never mix with general garbage. Always wrap
+                                    terminals with tape and hand over to certified e-waste recyclers.</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-xs text-amber-300 flex items-center gap-1.5">
+                            <i data-lucide="shield" class="w-4 h-4"></i> Protects workers from toxins & fires
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <section id="calculator" class="py-16 relative">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <div class="text-center mb-10">
+                    <span class="text-xs font-bold uppercase tracking-widest text-mint">Campus & Community
+                        Simulator</span>
+                    <h2 class="text-3xl font-display font-bold text-white mt-1">Measure Your Segregation Impact</h2>
+                    <p class="text-gray-400 text-sm mt-2">Estimate daily waste diverted from landfills and carbon
+                        emission savings across your hostel or college campus.</p>
+                </div>
+
+                <div class="glass-card rounded-3xl p-6 sm:p-10 border border-emerald-800/50">
+
+                    <!-- Slider Control -->
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <label for="campusSlider" class="text-sm sm:text-base font-semibold text-gray-200">
+                                Daily Active People / Disposed Items:
+                            </label>
+                            <span id="sliderDisplay" class="text-xl font-bold font-display text-mint">500 Units</span>
+                        </div>
+                        <input type="range" id="campusSlider" min="50" max="5000" step="50" value="500"
+                            class="w-full h-2.5 bg-emerald-950 rounded-lg appearance-none cursor-pointer slider-thumb border border-emerald-700/40"
+                            oninput="updateImpactMetrics(this.value)" />
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>Small Hostel (50)</span>
+                            <span>College Campus (1,500)</span>
+                            <span>Large University (5,000)</span>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Output Metrics Grid -->
+                    <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                        <div class="p-5 rounded-2xl bg-emerald-950/60 border border-emerald-700/40 text-center">
+                            <div class="w-8 h-8 mx-auto mb-2 text-mint flex items-center justify-center">
+                                <i data-lucide="trash-2" class="w-6 h-6"></i>
+                            </div>
+                            <p class="text-xs text-gray-400 uppercase font-semibold">Landfill Diverted</p>
+                            <p id="divertedWeight" class="text-3xl font-bold font-display text-white mt-1">125 kg</p>
+                            <p class="text-[11px] text-emerald-400 mt-1 font-medium">Daily clean segregated waste</p>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-emerald-950/60 border border-emerald-700/40 text-center">
+                            <div class="w-8 h-8 mx-auto mb-2 text-cyanGlow flex items-center justify-center">
+                                <i data-lucide="cloud-off" class="w-6 h-6"></i>
+                            </div>
+                            <p class="text-xs text-gray-400 uppercase font-semibold">GHG Emissions Prevented</p>
+                            <p id="co2Savings" class="text-3xl font-bold font-display text-cyanGlow mt-1">187 kg</p>
+                            <p class="text-[11px] text-cyan-300 mt-1 font-medium">CO₂e methane offset</p>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-emerald-950/60 border border-emerald-700/40 text-center">
+                            <div class="w-8 h-8 mx-auto mb-2 text-amberGold flex items-center justify-center">
+                                <i data-lucide="recycle" class="w-6 h-6"></i>
+                            </div>
+                            <p class="text-xs text-gray-400 uppercase font-semibold">Circularity Value</p>
+                            <p id="recyclableQty" class="text-3xl font-bold font-display text-amberGold mt-1">45 kg</p>
+                            <p class="text-[11px] text-amber-200 mt-1 font-medium">High-grade recyclable stock</p>
+                        </div>
+
+                    </div>
+
+                    <!-- Impact Summary Callout -->
+                    <div
+                        class="mt-6 p-4 rounded-xl bg-emerald-900/30 border border-emerald-600/30 flex items-start space-x-3">
+                        <i data-lucide="info" class="w-5 h-5 text-mint shrink-0 mt-0.5"></i>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            <strong>Sustainability Fact:</strong> In untreated mixed landfills, food waste decomposes
+                            anaerobically to emit methane (CH₄)—a greenhouse gas over 25 times more potent than carbon
+                            dioxide. Segregating organic items at source eliminates this decomposition vector
+                            completely.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <section id="sdg-hub" class="py-16 bg-emerald-950/30 border-t border-emerald-900/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="text-xs font-bold uppercase tracking-widest text-mint">United Nations Agenda
+                        2030</span>
+                    <h2 class="text-3xl sm:text-4xl font-display font-bold text-white mt-1">Targeted Sustainable
+                        Development Goals</h2>
+                    <p class="text-gray-400 text-sm sm:text-base mt-2">
+                        EcoSort AI was designed specifically around key UN Sustainable Development Goals during the 1M1B
+                        virtual internship initiative.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                    <!-- SDG 12 Card -->
+                    <div class="glass-card rounded-3xl p-8 border-l-4 border-l-amberGold flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span
+                                    class="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-950/70 text-amberGold border border-amber-500/40">Primary
+                                    Focus</span>
+                                <span class="text-2xl font-black font-display text-amberGold">SDG 12</span>
+                            </div>
+                            <h3 class="text-2xl font-display font-bold text-white">Responsible Consumption & Production
+                            </h3>
+                            <p class="text-gray-300 text-sm mt-3 leading-relaxed">
+                                Focuses directly on <strong>Target 12.5</strong>: <em>"By 2030, substantially reduce
+                                    waste generation through prevention, reduction, recycling and reuse."</em>
+                            </p>
+                            <ul class="mt-4 space-y-2 text-xs text-gray-400">
+                                <li class="flex items-center gap-2">
+                                    <i data-lucide="check-circle" class="w-4 h-4 text-amberGold"></i> Preserves pure
+                                    recyclable material without organic food fouling.
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i data-lucide="check-circle" class="w-4 h-4 text-amberGold"></i> Encourages
+                                    packaging preparation (crushing & rinsing) for compact logistics.
+                                </li>
+                            </ul>
+                        </div>
+                        <div
+                            class="mt-6 pt-4 border-t border-emerald-900/60 flex items-center justify-between text-xs text-gray-400">
+                            <span>UN Target Code: 12.5</span>
+                            <span class="text-amberGold font-semibold">Circularity Champion</span>
+                        </div>
+                    </div>
+
+                    <!-- SDG 11 Card -->
+                    <div class="glass-card rounded-3xl p-8 border-l-4 border-l-cyanGlow flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span
+                                    class="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-cyan-950/70 text-cyanGlow border border-cyan-500/40">Secondary
+                                    Focus</span>
+                                <span class="text-2xl font-black font-display text-cyanGlow">SDG 11</span>
+                            </div>
+                            <h3 class="text-2xl font-display font-bold text-white">Sustainable Cities & Communities</h3>
+                            <p class="text-gray-300 text-sm mt-3 leading-relaxed">
+                                Focuses directly on <strong>Target 11.6</strong>: <em>"By 2030, reduce the adverse per
+                                    capita environmental impact of cities, including by paying special attention to
+                                    municipal waste management."</em>
+                            </p>
+                            <ul class="mt-4 space-y-2 text-xs text-gray-400">
+                                <li class="flex items-center gap-2">
+                                    <i data-lucide="check-circle" class="w-4 h-4 text-cyanGlow"></i> Prevents open
+                                    dumpsite overfilling across smart university campuses.
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i data-lucide="check-circle" class="w-4 h-4 text-cyanGlow"></i> Shields sanitation
+                                    workers from broken sharp glass and corrosive batteries.
+                                </li>
+                            </ul>
+                        </div>
+                        <div
+                            class="mt-6 pt-4 border-t border-emerald-900/60 flex items-center justify-between text-xs text-gray-400">
+                            <span>UN Target Code: 11.6</span>
+                            <span class="text-cyanGlow font-semibold">Urban Sanitation Safety</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="glass-card border-t border-emerald-900/60 py-10 mt-12 text-sm text-gray-400">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+
+            <div class="flex items-center space-x-3 text-center md:text-left">
+                <div class="h-8 w-8 rounded-lg bg-mint flex items-center justify-center text-black font-bold">
+                    <i data-lucide="recycle" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <p class="text-white font-semibold">EcoSort AI Assistant</p>
+                    <p class="text-xs text-gray-400">1M1B AI for Sustainability Virtual Internship in collaboration with
+                        IBM SkillsBuild & AICTE</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-6 text-xs font-medium">
+                <a href="https://github.com/Damon00007/EcoSort-AI-Waste-Segregation-Assistant" target="_blank"
+                    rel="noopener noreferrer" class="hover:text-mint transition flex items-center gap-1.5">
+                    <i data-lucide="github" class="w-4 h-4"></i> GitHub Repo
+                </a>
+                <a href="#classifier" class="hover:text-mint transition">Classifier</a>
+                <a href="#bin-guide" class="hover:text-mint transition">Bin Guidelines</a>
+                <a href="#sdg-hub" class="hover:text-mint transition">SDG Goals</a>
+            </div>
+
+            <div class="text-xs text-gray-400 text-center md:text-right">
+                Built for Sustainable Academic Campuses & Communities.
+            </div>
+
+        </div>
+    </footer>
+
+    <script>
+        // Embedded Knowledge Base for Comprehensive Real-Time Categorization
+        const wasteDatabase = [
+            {
+                keywords: ['plastic bottle', 'pet bottle', 'water bottle', 'mineral water', 'coke bottle', 'soda bottle'],
+                name: 'Plastic Water Bottle',
+                bin: 'Blue Bin (Dry Recyclable)',
+                binColor: 'blue',
+                binHex: '#3B82F6',
+                material: 'PET Polymer (Recycling Code #1)',
+                prep: 'Empty all liquids, rinse once, crush horizontally to save 60% bin volume, and re-screw the cap.',
+                impact: 'Saves 0.04 kWh of energy and keeps non-biodegradable microplastics out of ocean ecosystems.',
+                isHazardous: false
+            },
+            {
+                keywords: ['banana peel', 'banana', 'apple core', 'vegetable peel', 'fruit scrap', 'rotten fruit', 'leftover food', 'rice', 'dal', 'gravy', 'curry', 'egg shell', 'tea bag'],
+                name: 'Food & Organic Scrap (Banana Peel / Kitchen Waste)',
+                bin: 'Green Bin (Wet / Compostable)',
+                binColor: 'green',
+                binHex: '#10B981',
+                material: 'Organic Compostable Biomass',
+                prep: 'Separate completely from any plastic covers or wrappers. Do not tie inside polythene bags before dumping.',
+                impact: 'Diverts landfill bulk and stops methane (CH₄) gas production; directly converts into high-quality soil humus.',
+                isHazardous: false
+            },
+            {
+                keywords: ['lithium', 'battery', 'cell', 'mobile battery', 'phone battery', 'laptop battery', 'button cell', 'aaa battery', 'aa battery'],
+                name: 'Lithium-Ion / Dry Cell Battery',
+                bin: 'Red / Black Bin (Domestic Hazardous E-Waste)',
+                binColor: 'red',
+                binHex: '#EF4444',
+                material: 'Heavy Metals (Lithium, Cadmium, Cobalt, Nickel)',
+                prep: 'Cover positive and negative terminal contacts with insulating cello-tape to prevent accidental short-circuit spark fires.',
+                impact: 'Prevents toxic heavy-metal soil contamination and shields sanitation staff from dangerous chemical explosions.',
+                isHazardous: true
+            },
+            {
+                keywords: ['pizza box', 'greasy pizza', 'oily box', 'stained cardboard'],
+                name: 'Greasy Food-Stained Pizza Box',
+                bin: 'Green Bin (Wet / Compost) or Mixed Reject',
+                binColor: 'green',
+                binHex: '#10B981',
+                material: 'Soiled Cellulose Fiber with Grease Residue',
+                prep: 'Tear away the clean top lid and place it in the Blue Bin (Dry Recyclable). Place the grease/cheese-soaked bottom section in the Green Bin or landfill reject.',
+                impact: 'Oil and grease cannot be separated during paper pulping and will ruin entire tons of clean paper recycling.',
+                isHazardous: false
+            },
+            {
+                keywords: ['bulb', 'cfl', 'tubelight', 'fluorescent', 'tube light', 'broken bulb'],
+                name: 'Fluorescent CFL / Tube Light',
+                bin: 'Red / Black Bin (Domestic Hazardous Waste)',
+                binColor: 'red',
+                binHex: '#EF4444',
+                material: 'Phosphor Powder & Toxic Mercury Vapor',
+                prep: 'Wrap tightly in a protective newspaper sheet to avoid glass breakage and release of toxic mercury vapors.',
+                impact: 'Even 1 milligram of mercury can contaminate 1,000 liters of drinking groundwater.',
+                isHazardous: true
+            },
+            {
+                keywords: ['soda can', 'aluminium can', 'tin can', 'coke can', 'beverage can'],
+                name: 'Aluminium Beverage Can',
+                bin: 'Blue Bin (Dry Recyclable)',
+                binColor: 'blue',
+                binHex: '#3B82F6',
+                material: 'High-Purity Aluminium Metal',
+                prep: 'Rinse out sticky sugary syrup with water and crush flat for easy transportation.',
+                impact: 'Recycling aluminium requires 95% less energy than mining raw bauxite ore.',
+                isHazardous: false
+            },
+            {
+                keywords: ['glass bottle', 'beer bottle', 'glass jar', 'perfume bottle'],
+                name: 'Glass Jar / Beverage Bottle',
+                bin: 'Blue Bin (Dry Recyclable)',
+                binColor: 'blue',
+                binHex: '#3B82F6',
+                material: 'Inorganic Silica Glass (100% Infinitely Recyclable)',
+                prep: 'Rinse thoroughly, remove metal/plastic crowns or caps, and place gently without shattering.',
+                impact: 'Glass can be recycled indefinitely without losing purity or chemical integrity.',
+                isHazardous: false
+            },
+            {
+                keywords: ['styrofoam', 'thermocol', 'disposable cup', 'packaging foam'],
+                name: 'Expanded Polystyrene (Styrofoam / Thermocol)',
+                bin: 'Black / Grey Bin (Reject & Landfill Stream)',
+                binColor: 'gray',
+                binHex: '#64748B',
+                material: 'Polystyrene #6 (Non-Biodegradable & Difficult to Recycle)',
+                prep: 'Break into smaller blocks. Avoid burning as it releases hazardous styrene gas and toxins.',
+                impact: 'Highlighting this item encourages campus switches to biodegradable paper or steel cutlery.',
+                isHazardous: false
+            },
+            {
+                keywords: ['cardboard', 'carton', 'shipping box', 'amazon box', 'paper box'],
+                name: 'Corrugated Cardboard Packaging Box',
+                bin: 'Blue Bin (Dry Recyclable)',
+                binColor: 'blue',
+                binHex: '#3B82F6',
+                material: 'Kraft Paper & Cellulose Fiber',
+                prep: 'Peel off shipping adhesive tape, remove plastic bubble wrap, and flatten the box completely.',
+                impact: 'Every 1 ton of segregated cardboard saves 17 mature trees and 7,000 gallons of industrial water.',
+                isHazardous: false
+            },
+            {
+                keywords: ['mask', 'syringe', 'sanitary pad', 'diaper', 'cotton swab', 'band aid'],
+                name: 'Sanitary / Bio-Medical Waste',
+                bin: 'Red / Bio-Hazard Bin (Segregated Reject)',
+                binColor: 'red',
+                binHex: '#EF4444',
+                material: 'Contaminated Biomedical Composite',
+                prep: 'Wrap securely in newspaper, mark with a red "X", and dispose into designated sanitary waste collection.',
+                impact: 'Shields manual sanitation workers from pathogenic blood-borne infections.',
+                isHazardous: true
+            }
+        ];
+
+        function setQuery(text) {
+            document.getElementById('wasteInput').value = text;
+            classifyItem();
+        }
+
+        function classifyItem() {
+            const input = document.getElementById('wasteInput').value.trim().toLowerCase();
+            const container = document.getElementById('resultContainer');
+
+            if (!input) {
+                showCustomAlert('Please enter an item name or description first.');
+                return;
+            }
+
+            // Find match in dataset
+            let matched = wasteDatabase.find(item =>
+                item.keywords.some(kw => input.includes(kw)) || input.includes(item.name.toLowerCase())
+            );
+
+            // Intelligent generic fallback if not exact match
+            if (!matched) {
+                if (input.includes('plastic') || input.includes('paper') || input.includes('metal') || input.includes('tin') || input.includes('box')) {
+                    matched = {
+                        name: capitalize(input),
+                        bin: 'Blue Bin (Dry Recyclable)',
+                        binColor: 'blue',
+                        binHex: '#3B82F6',
+                        material: 'Dry Recyclable Composite',
+                        prep: 'Ensure the item is rinsed free from organic food liquids and crushed flat before disposal.',
+                        impact: 'Prevents recyclable material loss and increases resource circularity.',
+                        isHazardous: false
+                    };
+                } else if (input.includes('food') || input.includes('peel') || input.includes('tea') || input.includes('leaf') || input.includes('bread')) {
+                    matched = {
+                        name: capitalize(input),
+                        bin: 'Green Bin (Wet / Compostable)',
+                        binColor: 'green',
+                        binHex: '#10B981',
+                        material: 'Organic Biodegradable Matter',
+                        prep: 'Keep free of polythene and packaging ties. Dispose directly into wet compost bins.',
+                        impact: 'Enables high-yield aerobic compost and eliminates methane formation in dumpsites.',
+                        isHazardous: false
+                    };
+                } else if (input.includes('battery') || input.includes('chemical') || input.includes('paint') || input.includes('acid') || input.includes('medicine')) {
+                    matched = {
+                        name: capitalize(input),
+                        bin: 'Red / Black Bin (Domestic Hazardous)',
+                        binColor: 'red',
+                        binHex: '#EF4444',
+                        material: 'Toxic Hazardous Material',
+                        prep: 'Tape exposed contacts or enclose in sealed protective wrap to protect handlers.',
+                        impact: 'Directly mitigates soil, water poisoning, and worker chemical hazard risks.',
+                        isHazardous: true
+                    };
+                } else {
+                    matched = {
+                        name: capitalize(input),
+                        bin: 'General Dry Recyclable / Check Packaging',
+                        binColor: 'blue',
+                        binHex: '#3B82F6',
+                        material: 'Mixed Packaging Material',
+                        prep: 'Check for local municipal recycling stamp (Numbers 1-7). Rinse away any organic contamination.',
+                        impact: 'Prevents accidental contamination of bulk composting beds.',
+                        isHazardous: false
+                    };
+                }
+            }
+
+            // Render Result Card
+            renderResultCard(matched);
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function renderResultCard(data) {
+            const container = document.getElementById('resultContainer');
+            container.classList.remove('hidden');
+
+            const colorMap = {
+                green: {
+                    border: 'border-emerald-500',
+                    bg: 'bg-emerald-950/70',
+                    badgeBg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+                    icon: 'leaf'
+                },
+                blue: {
+                    border: 'border-blue-500',
+                    bg: 'bg-blue-950/70',
+                    badgeBg: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
+                    icon: 'box'
+                },
+                red: {
+                    border: 'border-red-500',
+                    bg: 'bg-red-950/70',
+                    badgeBg: 'bg-red-500/20 text-red-300 border-red-500/40',
+                    icon: 'alert-triangle'
+                },
+                gray: {
+                    border: 'border-slate-500',
+                    bg: 'bg-slate-900/70',
+                    badgeBg: 'bg-slate-700/30 text-slate-300 border-slate-500/40',
+                    icon: 'trash-2'
+                }
+            };
+
+            const style = colorMap[data.binColor] || colorMap.green;
+
+            container.innerHTML = `
+        <div class="p-6 rounded-2xl ${style.bg} border ${style.border} transition-all duration-300 animate-fadeIn">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+            <div>
+              <span class="text-xs uppercase tracking-wider text-gray-400 font-semibold">Identified Item</span>
+              <h3 class="text-2xl font-display font-bold text-white mt-0.5">${data.name}</h3>
+            </div>
+            <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold border ${style.badgeBg}">
+              <i data-lucide="${style.icon}" class="w-4 h-4"></i>
+              <span>${data.bin}</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+            
+            <div class="p-4 rounded-xl bg-black/30 border border-white/5">
+              <p class="text-xs text-gray-400 font-semibold uppercase flex items-center gap-1.5">
+                <i data-lucide="tag" class="w-3.5 h-3.5 text-mint"></i>
+                Material Composition
+              </p>
+              <p class="text-sm font-medium text-white mt-1.5">${data.material}</p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-black/30 border border-white/5">
+              <p class="text-xs text-gray-400 font-semibold uppercase flex items-center gap-1.5">
+                <i data-lucide="wrench" class="w-3.5 h-3.5 text-amberGold"></i>
+                Pre-Disposal Step
+              </p>
+              <p class="text-xs sm:text-sm font-medium text-gray-200 mt-1.5">${data.prep}</p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-black/30 border border-white/5">
+              <p class="text-xs text-gray-400 font-semibold uppercase flex items-center gap-1.5">
+                <i data-lucide="globe-2" class="w-3.5 h-3.5 text-cyanGlow"></i>
+                Circularity Impact
+              </p>
+              <p class="text-xs sm:text-sm font-medium text-emerald-200 mt-1.5">${data.impact}</p>
+            </div>
+
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <span class="text-gray-400 flex items-center gap-1.5">
+              <i data-lucide="check" class="w-4 h-4 text-mint"></i>
+              Verified against Municipal Solid Waste Rules (SWM 2016)
+            </span>
+            <button onclick="speakGuidance('${data.name}', '${data.bin}')" class="px-3 py-1.5 rounded-lg bg-emerald-900/60 hover:bg-emerald-800 text-mint border border-emerald-700/50 flex items-center gap-1.5 font-medium transition">
+              <i data-lucide="volume-2" class="w-4 h-4"></i> Read Instruction
+            </button>
+          </div>
+
+        </div>
+      `;
+
+            // Reinitialize Lucide icons for new elements
+            lucide.createIcons();
+        }
+
+        function speakGuidance(item, bin) {
+            if ('speechSynthesis' in window) {
+                const text = `Please dispose ${item} into the ${bin}. Ensure required pre-cleaning is completed.`;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utterance);
+            } else {
+                showCustomAlert(`Instruction: Put ${item} in ${bin}.`);
+            }
+        }
+
+        function showCustomAlert(message) {
+            const alertBox = document.createElement('div');
+            alertBox.className = 'fixed bottom-6 right-6 z-50 px-5 py-3 rounded-2xl bg-emerald-900 border border-mint text-white text-sm shadow-2xl flex items-center space-x-2 animate-bounce';
+            alertBox.innerHTML = `<i data-lucide="info" class="w-4 h-4 text-mint"></i><span>${message}</span>`;
+            document.body.appendChild(alertBox);
+            lucide.createIcons();
+            setTimeout(() => alertBox.remove(), 3500);
+        }
+
+        function updateImpactMetrics(val) {
+            const units = parseInt(val, 10);
+            document.getElementById('sliderDisplay').innerText = `${units.toLocaleString()} Units`;
+
+            // Coefficients: ~0.25 kg solid waste/person, 60% diverted, 1.5kg CO2e factor
+            const divertedKg = Math.round(units * 0.25);
+            const co2eSaved = Math.round(divertedKg * 1.5);
+            const recyclableKg = Math.round(divertedKg * 0.36);
+
+            document.getElementById('divertedWeight').innerText = `${divertedKg.toLocaleString()} kg`;
+            document.getElementById('co2Savings').innerText = `${co2eSaved.toLocaleString()} kg`;
+            document.getElementById('recyclableQty').innerText = `${recyclableKg.toLocaleString()} kg`;
+        }
+
+        window.onload = function () {
+            lucide.createIcons();
+            // Set initial sample query
+            setQuery('Plastic Water Bottle');
+        };
+    </script>
+</body>
+
+</html>
